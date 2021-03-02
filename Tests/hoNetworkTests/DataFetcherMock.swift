@@ -16,8 +16,16 @@ class DataFetcherMock: DataFectherType {
         subject.send(completion: .failure(error))
     }
 
-    func fetchData(from url: URL) -> AnyPublisher<Data, NetworkError> {
+    func fetchData(fromUrl url: URL) -> AnyPublisher<Data, NetworkError> {
         return subject
             .eraseToAnyPublisher()
+    }
+
+    func fetchData<E: Endpoint>(fromEndpoint endpoint: E) -> AnyPublisher<Data, NetworkError> {
+        guard let url = endpoint.url else {
+                   return Fail<Data, NetworkError>(error: .malformedURL)
+                       .eraseToAnyPublisher()
+               }
+               return fetchData(fromUrl: url)
     }
 }

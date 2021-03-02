@@ -1,7 +1,8 @@
 import Foundation
 
 
-enum NetworkError: Error, Equatable {
-    case url(URLError)
+public enum NetworkError: Error, Equatable {
+    case apiError(URLError)
     case unableToDecode
+    case malformedURL
 }

@@ -1,22 +1,31 @@
 import Foundation
 import Combine
 
-protocol DataFectherType {
-    func fetchData(from url: URL) -> AnyPublisher<Data, NetworkError>
+public protocol DataFectherType {
+    func fetchData(fromUrl url: URL) -> AnyPublisher<Data, NetworkError>
+    func fetchData<E: Endpoint>(fromEndpoint endpoint: E) -> AnyPublisher<Data, NetworkError>
 }
 
-class DataFetcher {
+public class DataFetcher {
     private let urlSession: URLSession
 
-    init(urlSession: URLSession = .shared) { self.urlSession = urlSession }
+    public init(urlSession: URLSession = .shared) { self.urlSession = urlSession }
 }
 
 extension DataFetcher: DataFectherType {
-    func fetchData(from url: URL) -> AnyPublisher<Data, NetworkError> {
+    public func fetchData(fromUrl url: URL) -> AnyPublisher<Data, NetworkError> {
         urlSession
             .dataTaskPublisher(for: url)
             .map(\.data)
-            .mapError { return NetworkError.url($0) }
+            .mapError { return NetworkError.apiError($0) }
             .eraseToAnyPublisher()
+    }
+
+    public func fetchData<E: Endpoint>(fromEndpoint endpoint: E) -> AnyPublisher<Data, NetworkError> {
+        guard let url = endpoint.url else {
+            return Fail<Data, NetworkError>(error: .malformedURL)
+                .eraseToAnyPublisher()
+        }
+        return fetchData(fromUrl: url)
     }
 }
