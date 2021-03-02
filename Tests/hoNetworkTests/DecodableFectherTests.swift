@@ -1,20 +1,6 @@
 import XCTest
 import Combine
 @testable import hoNetwork
-
-struct TestModel: Codable, Equatable {
-    var string: String
-    var int: Int
-    var double: Double
-    static var count = 0
-
-    init() {
-        string = String(TestModel.count)
-        int = TestModel.count
-        double = 1.0 * Double(TestModel.count)
-        TestModel.count += 1
-    }
-}
     
 class DecodableFectherTests: XCTestCase {
     let fetcherMock = DataFetcherMock()
@@ -64,26 +50,5 @@ class DecodableFectherTests: XCTestCase {
             })
         let dismatchingModel = 34
         fetcherMock.publish(dismatchingModel)
-    }
-}
-
-
-class DataFetcherMock: DataFectherType {
-    private let subject = PassthroughSubject<Data, NetworkError>()
-
-    func publish<T: Encodable>(_ model: T) {
-        guard let data = try? JSONEncoder().encode(model) else {
-            fatalError("Unable to encode model")
-        }
-        subject.send(data)
-    }
-
-    func publish(error: NetworkError) {
-        subject.send(completion: .failure(error))
-    }
-
-    func fetchData(from url: URL) -> AnyPublisher<Data, NetworkError> {
-        return subject
-            .eraseToAnyPublisher()
     }
 }
