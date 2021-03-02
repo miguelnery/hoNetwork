@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "honeyCache",
+        "repositoryURL": "https://github.com/miguelnery/honeyCache",
+        "state": {
+          "branch": null,
+          "revision": "83b730596d62501a4ef9e1f6d188eeac757ad4f9",
+          "version": "0.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
